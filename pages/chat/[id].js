@@ -19,7 +19,7 @@ function Chat() {
 
 export default Chat;
 
-export async function getServerSideProps(context){
+export async function getServerSideProps(contex){
   
 }
 
