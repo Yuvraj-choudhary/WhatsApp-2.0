@@ -43,7 +43,7 @@ const Container = styled.div`
   word-break: break-word;
   width: 100%;
   :hover {
-    background-color: #e9eaeb;
+    background-color: #f5f5f5;
   }
 `;
 const UserAvatar = styled(Avatar)`

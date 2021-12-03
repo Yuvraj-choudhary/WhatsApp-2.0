@@ -12,10 +12,15 @@ import { useCollection } from "react-firebase-hooks/firestore";
 import InsertEmoticonRoundedIcon from "@material-ui/icons/InsertEmoticonRounded";
 import Message from "./Message";
 import MicRoundedIcon from "@material-ui/icons/MicRounded";
+import SendRoundedIcon from "@material-ui/icons/SendRounded";
+import { useState } from "react";
+import firebase from "firebase";
+import TimeAgo from "timeago-react";
 //? const Eom = EndOfMessage
 
 function ChatScreen({ chat, messages }) {
   const [user] = useAuthState(auth);
+  const [input, setInput] = useState("");
   const router = useRouter();
   const [messagesSnapshot] = useCollection(
     db
@@ -23,6 +28,12 @@ function ChatScreen({ chat, messages }) {
       .doc(router.query.id)
       .collection("messages")
       .orderBy("timestamp", "asc")
+  );
+
+  const [recipientSnapshot] = useCollection(
+    db
+      .collection("users")
+      .where("email", "==", getRecipientEmail(chat.users, user))
   );
 
   const showMessages = () => {
@@ -37,34 +48,84 @@ function ChatScreen({ chat, messages }) {
           }}
         />
       ));
+    } else {
+      return JSON.parse(messages).map((message) => {
+        <Message key={message.id} user-={message.user} message={message} />;
+      });
     }
   };
+
+  const sendMessage = (e) => {
+    e.preventDefault();
+
+    db.collection("users").doc(user.uid).set(
+      {
+        lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
+      },
+      { merge: true }
+    );
+
+    db.collection("chats").doc(router.query.id).collection("messages").add({
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+      message: input,
+      user: user.email,
+      photoURL: user.photoURL,
+    });
+
+    setInput("");
+  };
+
+  const recipient = recipientSnapshot?.docs?.[0]?.data();
+
+  const recipientEmail = getRecipientEmail(chat.users, user);
 
   return (
     <Container>
       <Header>
-        <Avatar
-          style={{
-            boxShadow: "3px 3px 20px grey",
-          }}
-        />
+        {recipient ? (
+          <Avatar
+            src={recipient?.photoURL}
+            style={{
+              boxShadow: "3px 3px 20px grey",
+            }}
+          />
+        ) : (
+          <Avatar
+            style={{
+              boxShadow: "3px 3px 20px grey",
+            }}
+          >
+            {recipientEmail[0]}
+          </Avatar>
+        )}
 
         <HeaderInfo>
-          <h5>{getRecipientEmail(chat.users, user)}</h5>
-          <p>Last seen ...</p>
+          <h5>{recipientEmail}</h5>
+          {recipientSnapshot ? (
+            <p>
+              Last active:{" "}
+              {recipient?.lastSeen?.toDate() ? (
+                <TimeAgo datatime={recipient?.lastSeen?.toDate()} />
+              ) : (
+                "Unavailable"
+              )}
+            </p>
+          ) : (
+            <p>Loading Last active...</p>
+          )}
         </HeaderInfo>
         <HeaderIcons>
           <IconButton
             style={{
               marginRight: "7px",
-              boxShadow: "3px 3px 20px grey",
+              boxShadow: "1px 3px 10px grey",
             }}
           >
             <SearchRoundedIcon />
           </IconButton>
           <IconButton
             style={{
-              boxShadow: "3px 3px 20px grey",
+              boxShadow: "1px 3px 10px grey",
             }}
           >
             <MoreVertRoundedIcon />
@@ -81,7 +142,7 @@ function ChatScreen({ chat, messages }) {
         <IconButton
           style={{
             marginRight: "7px",
-            boxShadow: "3px 3px 20px grey",
+            boxShadow: "1px 3px 10px grey",
           }}
         >
           <InsertEmoticonRoundedIcon />
@@ -89,7 +150,7 @@ function ChatScreen({ chat, messages }) {
         <IconButton
           style={{
             marginRight: "7px",
-            boxShadow: "3px 3px 20px grey",
+            boxShadow: "1px 3px 10px grey",
           }}
         >
           <AttachmentRoundedIcon
@@ -98,15 +159,34 @@ function ChatScreen({ chat, messages }) {
             }}
           />
         </IconButton>
-        <Input placeholder="Type a message" />
-        <IconButton
-          style={{
-            marginLeft: "7px",
-            boxShadow: "3px 3px 20px grey",
-          }}
-        >
-          <MicRoundedIcon />
-        </IconButton>
+        <Input
+          placeholder="Type a message"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+        />
+
+        {input ? (
+          <IconButton
+            style={{
+              marginLeft: "7px",
+              boxShadow: "1px 3px 10px grey",
+            }}
+            disabled={!input}
+            type="submit"
+            onClick={sendMessage}
+          >
+            <SendRoundedIcon />
+          </IconButton>
+        ) : (
+          <IconButton
+            style={{
+              marginLeft: "7px",
+              boxShadow: "1px 3px 10px grey",
+            }}
+          >
+            <MicRoundedIcon />
+          </IconButton>
+        )}
       </InputContainer>
     </Container>
   );
@@ -147,9 +227,7 @@ const HeaderIcons = styled.div``;
 const MessageContainer = styled.div`
   padding: 30px;
   min-height: 90vh;
-  background-image: url("http://s1.picswalls.com/wallpapers/2016/06/10/4k-images_065230592_309.jpg");
-  background-repeat: no-repeat;
-  background-size: cover;
+  background-color: white;
 `;
 
 const Eom = styled.div``;
@@ -164,7 +242,7 @@ const Input = styled.input`
   border: none;
   outline-width: 0;
   border-radius: 100px;
-  box-shadow: 3px 3px 20px grey;
+  box-shadow: 3px 3px 20px #969696;
 `;
 
 const InputContainer = styled.form`
@@ -172,7 +250,7 @@ const InputContainer = styled.form`
   align-items: center;
   padding: 5px;
   position: sticky;
-  background-color: #f0f0f0;
+  background-color: white;
   bottom: 0;
   z-index: 100;
 `;

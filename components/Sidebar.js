@@ -55,7 +55,7 @@ function Sidebar() {
             <IconButton
               style={{
                 marginRight: "7px",
-                boxShadow: "3px 3px 20px grey",
+                boxShadow: "1px 3px 10px grey",
               }}
             >
               <DonutLargeRoundedIcon />
@@ -64,14 +64,14 @@ function Sidebar() {
               onClick={createChat}
               style={{
                 marginRight: "7px",
-                boxShadow: "3px 3px 20px grey",
+                boxShadow: "1px 3px 10px grey",
               }}
             >
               <ChatRoundedIcon />
             </IconButton>
             <IconButton
               style={{
-                boxShadow: "3px 3px 20px grey",
+                boxShadow: "1px 3px 10px grey",
               }}
             >
               <MoreVertIcon />
@@ -105,7 +105,7 @@ const SidebarContainer = styled.div`
   height: 100vh;
   min-width: 300px;
   max-width: 350px;
-  overflow-y: auto;
+  overflow-y: scroll;
 
   ::-webkit-scrollbar {
     display: none;
@@ -144,7 +144,7 @@ const UserAvatar = styled(Avatar)`
   cursor: pointer;
   box-shadow: 3px 3px 20px grey;
   :hover {
-    opacity: 0.75;
+    opacity: 0.7;
   }
 `;
 const IconContainer = styled.div``;
