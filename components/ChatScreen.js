@@ -13,7 +13,7 @@ import InsertEmoticonRoundedIcon from "@material-ui/icons/InsertEmoticonRounded"
 import Message from "./Message";
 import MicRoundedIcon from "@material-ui/icons/MicRounded";
 import SendRoundedIcon from "@material-ui/icons/SendRounded";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import firebase from "firebase";
 import TimeAgo from "timeago-react";
 //? const Eom = EndOfMessage
@@ -21,6 +21,7 @@ import TimeAgo from "timeago-react";
 function ChatScreen({ chat, messages }) {
   const [user] = useAuthState(auth);
   const [input, setInput] = useState("");
+  const endofMessageRef = useRef(null);
   const router = useRouter();
   const [messagesSnapshot] = useCollection(
     db
@@ -55,6 +56,13 @@ function ChatScreen({ chat, messages }) {
     }
   };
 
+  const scrollToBottom = () => {
+    endofMessageRef.current.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
+
   const sendMessage = (e) => {
     e.preventDefault();
 
@@ -73,6 +81,7 @@ function ChatScreen({ chat, messages }) {
     });
 
     setInput("");
+    scrollToBottom();
   };
 
   const recipient = recipientSnapshot?.docs?.[0]?.data();
@@ -135,7 +144,7 @@ function ChatScreen({ chat, messages }) {
 
       <MessageContainer>
         {showMessages()}
-        <Eom />
+        <Eom ref={endofMessageRef} />
       </MessageContainer>
 
       <InputContainer>
@@ -230,7 +239,9 @@ const MessageContainer = styled.div`
   background-color: white;
 `;
 
-const Eom = styled.div``;
+const Eom = styled.div`
+  margin-bottom: 50px;
+`;
 
 const Input = styled.input`
   flex: 1;
