@@ -49,6 +49,7 @@ const Container = styled.div`
 const UserAvatar = styled(Avatar)`
   margin: 5px;
   margin-right: 15px;
+  box-shadow: 3px 3px 20px grey;
   cursor: pointer;
   :hover {
     opacity: 0.75;

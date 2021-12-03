@@ -32,3 +32,7 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
 You can Deploy your app to the web by checking out [Vercel](https://vercel.com/) - creator of Next.js!
+
+## Optional
+
+You can also install [BetterComments](https://marketplace.visualstudio.com/items?itemName=aaron-bond.better-comments) - to get better experience with coding.

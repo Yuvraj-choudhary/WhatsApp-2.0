@@ -52,19 +52,38 @@ function Sidebar() {
         <Header>
           <UserAvatar src={user.photoURL} onClick={signOut} />
           <IconContainer>
-            <IconButton>
+            <IconButton
+              style={{
+                marginRight: "7px",
+                boxShadow: "3px 3px 20px grey",
+              }}
+            >
               <DonutLargeRoundedIcon />
             </IconButton>
-            <IconButton onClick={createChat}>
+            <IconButton
+              onClick={createChat}
+              style={{
+                marginRight: "7px",
+                boxShadow: "3px 3px 20px grey",
+              }}
+            >
               <ChatRoundedIcon />
             </IconButton>
-            <IconButton>
+            <IconButton
+              style={{
+                boxShadow: "3px 3px 20px grey",
+              }}
+            >
               <MoreVertIcon />
             </IconButton>
           </IconContainer>
         </Header>
         <Search>
-          <SearchContainer>
+          <SearchContainer
+            style={{
+              boxShadow: "3px 3px 20px grey",
+            }}
+          >
             <SearchIcon />
             <SearchInput placeholder="Search in chats" />
           </SearchContainer>
@@ -80,7 +99,21 @@ function Sidebar() {
 export default Sidebar;
 
 const SidebarApp = styled.div``;
-const SidebarContainer = styled.div``;
+const SidebarContainer = styled.div`
+  flex: 0.45;
+  border-right: 1px solid whitesmoke;
+  height: 100vh;
+  min-width: 300px;
+  max-width: 350px;
+  overflow-y: auto;
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
+
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+`;
 const SearchIcon = styled(SearchRoundedIcon)`
   color: #707070;
   margin-left: 10px;
@@ -109,6 +142,7 @@ const Header = styled.div`
 const UserAvatar = styled(Avatar)`
   margin: 10px;
   cursor: pointer;
+  box-shadow: 3px 3px 20px grey;
   :hover {
     opacity: 0.75;
   }
